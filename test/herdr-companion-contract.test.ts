@@ -7,7 +7,7 @@ import { containsAtBoundary, herdrRootCandidates, readRegisteredProjects } from 
 
 // #1199 H0 (task #793): the frozen Herdr mod host contract, its fixtures and the selector rules. Nothing here starts Herdr, loads a mod, reads a profile or touches the network.
 // A fake cannot establish installed capabilities, terminal address equivalence, native UI improvement or remote reachability: those stay person-run receipts in H1 to H3.
-const PLUGIN = join(import.meta.dir, "../integrations/herdr");
+const PLUGIN = join(import.meta.dir, "..");
 const contract = JSON.parse(readFileSync(join(PLUGIN, "host-contract-v1.json"), "utf8"));
 const ALL: HerdrFixtureFunction[] = ["exec", "run", "spaces", "panes", "focused", "machines", "terminals", "commands"];
 const space = (id: string, machine: string | null, folder = "/work/proj"): HerdrFixtureSpace => ({ id, index: 1, name: id, folder, machine, tabs: [{ id: `${id}/t1`, index: 1, name: "1" }] });
@@ -201,16 +201,13 @@ test("the fixture offers only what a test lists, and an unlisted function or com
   expect(HerdrFixtureCliError.name).toBe("HerdrFixtureCliError");
 });
 
-test("neither companion depends on the other: the Herdr files never name Orca and the Orca files never name Herdr", () => {
+test("the Herdr companion names no other companion: its shipped files (mod/, docs, receipts) and fixtures never mention Orca", () => {
+  // Scoped to this repository's own shipped files, not to test/: the test files name the other product inside the scans that forbid it. The Orca side of this check lives in ahub-orca.
   const files = (dir: string): string[] => readdirSync(dir, { recursive: true, withFileTypes: true }).filter(e => e.isFile()).map(e => join(e.parentPath, e.name));
-  const herdr = [...files(PLUGIN), join(import.meta.dir, "helpers/herdr-mod-host.ts"), join(import.meta.dir, "helpers/herdr-root-candidates.ts"), join(import.meta.dir, "fakes/herdr-companion-cli.ts")];
-  for (const file of herdr) expect(readFileSync(file, "utf8"), file).not.toMatch(/orca/i);
-  const orca = join(import.meta.dir, "../integrations/orca");
-  if (existsSync(orca)) for (const file of files(orca)) expect(readFileSync(file, "utf8"), file).not.toMatch(/herdr/i);
+  const shipped = [...files(join(PLUGIN, "mod")), ...files(join(PLUGIN, "receipts")), ...readdirSync(PLUGIN).filter(name => /\.(md|json)$/.test(name) && name !== "package.json" && name !== "tsconfig.json").map(name => join(PLUGIN, name))];
+  const fixtures = [join(import.meta.dir, "helpers/herdr-mod-host.ts"), join(import.meta.dir, "helpers/herdr-root-candidates.ts"), join(import.meta.dir, "fakes/herdr-companion-cli.ts")];
+  for (const file of [...shipped, ...fixtures]) expect(readFileSync(file, "utf8"), file).not.toMatch(/orca/i);
   for (const file of [join(import.meta.dir, "helpers/herdr-mod-host.ts"), join(import.meta.dir, "fakes/herdr-companion-cli.ts")]) expect(readFileSync(file, "utf8")).not.toMatch(/from "\.\.?\/(helpers|fakes)\/orca/);
 });
 
-test("no ahub runtime file mentions Herdr: this task changes no runtime", () => {
-  const walk = (dir: string): string[] => readdirSync(dir, { recursive: true, withFileTypes: true }).filter(e => e.isFile() && /\.(ts|js|mjs)$/.test(e.name)).map(e => join(e.parentPath, e.name));
-  for (const file of walk(join(import.meta.dir, "../src"))) expect(readFileSync(file, "utf8"), file).not.toMatch(/herdr/i);
-});
+// The ahub-side case here ("no ahub runtime file mentions Herdr") stays in agent-hub: test/companion-contract.test.ts (#1387 T0).

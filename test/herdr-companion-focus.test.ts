@@ -1,9 +1,9 @@
 import { expect, test } from "bun:test";
 import { FakeHerdrModHost, HERDR_FIXTURE_COMMANDS, type HerdrFixtureCliPort, type HerdrFixtureExecCall, type HerdrFixtureTerminal } from "./helpers/herdr-mod-host.ts";
 // @ts-ignore TS7016: untyped plain JavaScript by design
-import * as core from "../integrations/herdr/mod/core.js";
+import * as core from "../mod/core.js";
 // @ts-ignore TS7016: untyped plain JavaScript by design
-import * as focus from "../integrations/herdr/mod/focus.js";
+import * as focus from "../mod/focus.js";
 
 // #1199 H2 (task #795, AC5 and AC6): focus and peek an existing console only after its binding is verified from facts, and never terminate, replace or silently create a terminal. The
 // foreground shapes below are the ones real herdr-core 0.1.18 reported in an isolated session: `["bun", "<path>/ahub", "--project", X, "console"]`. The fixture proves the decisions,
@@ -195,7 +195,7 @@ test("AC5: it never types into, kills, parks, closes, restarts or creates anythi
   for (const bad of [["send", "t1", "x"], ["kill", "t1"], ["run", "ls"], ["keys", "t1", "enter"], ["rm", "t1"], ["get", "t1"], ["get", "t1/x", "--json"], ["get", "../t1", "--json"]]) {
     await expect(s.fake.hc(bad)).rejects.toMatchObject({ code: expect.stringMatching(/hc_unsupported|invalid_params/) });
   }
-  const src = ["focus.js", "core.js", "main.js"].map(n => require("node:fs").readFileSync(require("node:path").join(import.meta.dir, "../integrations/herdr/mod", n), "utf8").replace(/^\s*\/\/.*$/gm, "")).join("\n");
+  const src = ["focus.js", "core.js", "main.js"].map(n => require("node:fs").readFileSync(require("node:path").join(import.meta.dir, "../mod", n), "utf8").replace(/^\s*\/\/.*$/gm, "")).join("\n");
   for (const bad of [/terminal\.kill|terminal\.park|terminal\.keep|tab\.close|pane\.close|space\.close|terminal\.open.*place/, /hc\(\[\s*"(send|keys|kill|run|rm|put|label|interrupt|wait)"/, /\.read\(|"read"/]) expect(src, String(bad)).not.toMatch(bad);
   // the terminal's screen, title and labels were in every reading and never reached a result or the view
   const out = JSON.stringify([await s.entry.focusConsole(), s.entry.view()]);

@@ -3,11 +3,11 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { FakeHerdrModHost, HERDR_FIXTURE_COMMANDS, type HerdrFixtureCliPort, type HerdrFixtureExecCall } from "./helpers/herdr-mod-host.ts";
 // @ts-ignore TS7016: untyped plain JavaScript by design
-import * as core from "../integrations/herdr/mod/core.js";
+import * as core from "../mod/core.js";
 
 // #1199 H3 (task #796, AC9): each combination has its own recorded verdict, a combination without a receipt stays unsupported, and the remote workflow is exercised against the fixture only.
 // The receipts need a person's machines and are person-run; this file proves the rules around them and never claims them.
-const DIR = join(import.meta.dir, "../integrations/herdr");
+const DIR = join(import.meta.dir, "..");
 const matrix = JSON.parse(readFileSync(join(DIR, "support-matrix.json"), "utf8"));
 const contract = JSON.parse(readFileSync(join(DIR, "host-contract-v1.json"), "utf8"));
 
@@ -189,7 +189,4 @@ test("AC9: the README, support matrix and baseline comparison say the same thing
   expect(readme).toMatch(/person-run/);
   expect(readme).toMatch(/support-matrix\.json/);
   expect(readme).toMatch(/baseline-comparison\.md/);
-  const dogfood = readFileSync(join(import.meta.dir, "../docs/dogfood.md"), "utf8");
-  expect(dogfood).toMatch(/#1199 H3/);
-  expect(dogfood).toMatch(/person-run/);
 });

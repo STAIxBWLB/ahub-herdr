@@ -1,9 +1,9 @@
 import { expect, test } from "bun:test";
 import { FakeHerdrModHost, HERDR_FIXTURE_COMMANDS, type HerdrFixtureCliPort, type HerdrFixtureExecCall } from "./helpers/herdr-mod-host.ts";
 // @ts-ignore TS7016: untyped plain JavaScript by design
-import * as core from "../integrations/herdr/mod/core.js";
+import * as core from "../mod/core.js";
 // @ts-ignore TS7016: untyped plain JavaScript by design
-import * as card from "../integrations/herdr/mod/card.js";
+import * as card from "../mod/card.js";
 
 // #1199 H2 (task #795, AC4 and AC6): the read-only status card. Every state is distinct, the reading is a closed allowlist, nothing polls, and nothing a task says reaches the card. Fixture
 // only: nothing here proves how the card looks in a Herdr window, which is the person-run receipt.
@@ -178,7 +178,7 @@ test("AC6: the card and Herdr's own states never reach ahub: no call but the fix
   await s.entry.refreshCard(); await s.entry.refreshCard();
   const allowed = new Set(["projects --json", "--project p_a status --json"]);
   for (const e of s.execs) { expect(e.command).toBe("ahub"); expect(allowed.has(e.args.join(" ")), e.args.join(" ")).toBe(true); }
-  const files = ["card.js", "focus.js", "core.js", "main.js"].map(n => require("node:fs").readFileSync(require("node:path").join(import.meta.dir, "../integrations/herdr/mod", n), "utf8").replace(/^\s*\/\/.*$/gm, ""));
+  const files = ["card.js", "focus.js", "core.js", "main.js"].map(n => require("node:fs").readFileSync(require("node:path").join(import.meta.dir, "../mod", n), "utf8").replace(/^\s*\/\/.*$/gm, ""));
   for (const text of files) for (const bad of [/\btask[_ -]?done\b/i, /\bhub_review\b/, /\bhub_task/, /\bahub\s+(review|task|send|ask|approve)\b/, /"review"|"approve"|"approved"/, /\bhub_send\b|\bhub_remember\b/]) expect(text, String(bad)).not.toMatch(bad);
   // the closed state words contain no task or approval vocabulary beyond the counts the hub itself names
   for (const state of card.CARD_STATES) expect(state).toMatch(/^[a-z_]+$/);
@@ -282,7 +282,7 @@ test("review thread (card text): the formatter is pure and the rendered glue hol
   const good = { ok: true, state: "running", version: "1.2.3", tasks: {}, peers: [], missing: [] };
   expect(card.formatCard(good, () => "")).toEqual(["Status (running): hub 1.2.3; tasks: no task counts", "Peers: none reported"]);
   expect(card.formatCard({ ...good, peers: [{ id: "a", state: "idle", queued: null, pullOnly: false }, { id: "b", state: "busy", queued: 0, pullOnly: false }] }, () => "")[1]).toBe("Peers: a idle, queue ?; b busy, queue 0");
-  const src = require("node:fs").readFileSync(require("node:path").join(import.meta.dir, "../integrations/herdr/mod/main.js"), "utf8").replace(/^\s*\/\/.*$/gm, "");
+  const src = require("node:fs").readFileSync(require("node:path").join(import.meta.dir, "../mod/main.js"), "utf8").replace(/^\s*\/\/.*$/gm, "");
   expect(src).toContain("this.entry.cardLines()");
   // the glue never reaches into a reading, whatever it names the variable: no `.peers`, `.tasks`, `.queued`, `.version`, `.missing` or `.pullOnly` access, and no `this.entry.card(` call at all
   expect(src).not.toMatch(/\.(peers|tasks|queued|version|missing|pullOnly)\b/);

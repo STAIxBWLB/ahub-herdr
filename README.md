@@ -2,8 +2,11 @@
 
 Tasks H1, H2 and H3 of [#1199](https://github.com/STAIxBWLB/agent-hub/issues/1199), on the frozen
 [H0 contract](host-contract-v1.md). **Optional and removable.** Herdr and ahub keep working exactly as they do
-today with this folder absent. It is not an ahub dependency and ahub is not its dependency: nothing in `src/`,
-`scripts/` or `package.json` mentions it.
+today with this repository absent. It is not an ahub dependency and ahub is not its dependency. Moved out of agent-hub
+by [#1387](https://github.com/STAIxBWLB/agent-hub/issues/1387); it reads only what
+[`contract/companion-cli-v1.json`](contract/companion-cli-v1.json) lists of ahub's CLI (source and version in
+[contract/SOURCE.md](contract/SOURCE.md)). CI runs `bun test` only: `herdr-app check` needs the Herdr app, so it is a
+person-run step below and CI does not claim it.
 
 ## What it does
 

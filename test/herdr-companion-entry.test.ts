@@ -4,11 +4,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { FakeHerdrModHost, HERDR_FIXTURE_COMMANDS, type HerdrFixtureCliPort, type HerdrFixtureExecCall, type HerdrFixtureFocus, type HerdrFixtureSpace } from "./helpers/herdr-mod-host.ts";
 // @ts-ignore TS7016: untyped plain JavaScript by design
-import * as core from "../integrations/herdr/mod/core.js";
+import * as core from "../mod/core.js";
 
 // #1199 H1 (task #794): the entry point's decisions, run against the H0 fake host. Nothing here starts Herdr, loads the mod into a profile or reaches a machine. The native open
 // and disable receipt is person-run, and `herdr-app check` below (skipped where the binary is absent) proves only that the host accepts the files, not what they do in a window.
-const MOD = join(import.meta.dir, "../integrations/herdr/mod");
+const MOD = join(import.meta.dir, "../mod");
 const dirs: string[] = [];
 afterEach(() => { for (const dir of dirs.splice(0)) rmSync(dir, { recursive: true, force: true }); });
 

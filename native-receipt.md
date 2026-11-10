@@ -14,7 +14,7 @@ Each of the three claims is recorded **separately**. A passing `ahub console` do
 
 | # | Step | Record |
 | --- | --- | --- |
-| 1 | Copy `integrations/herdr/mod` to `<home>/mods/ahub`. Run `herdr-app check` on it | printed `check passed` (yes / no); Herdr version ___ |
+| 1 | Copy `mod/` to `<home>/mods/ahub`. Run `herdr-app check` on it | printed `check passed` (yes / no); Herdr version ___ |
 | 2 | Open the dialog (`mod.open` with name `ahub`, by key or palette) | actions to open it: ___ ; it shows the right machine and folder (yes / no) |
 | 3 | Select the project that contains the folder | actions: ___ (counted as selection) |
 | 4 | Click **Open console** | actions after selection: ___ (target at most 2) ; a new tab appeared (yes / no); it runs `ahub --project <id> console` for the selected project (yes / no); it started on the space's machine (yes / no) |
