@@ -19,7 +19,7 @@ test("the contract copy is the version this mod was written against", () => {
   expect(read("contract/SOURCE.md")).toMatch(/ahub version: \d+\.\d+\.\d+/);
 });
 
-test("every ahub command the mod runs or types is a listed argv form, except the recorded gap", () => {
+test("every ahub command the mod runs or types is a listed argv form", () => {
   // the closed word lists the mod passes, and the selector it puts before them
   expect(core.PROGRAM).toBe("ahub");
   expect(core.FIXED.projects).toEqual(["projects", "--json"]);
@@ -27,15 +27,14 @@ test("every ahub command the mod runs or types is a listed argv form, except the
   expect(core.FIXED.console).toEqual(["console"]);
   expect(core.FIXED.ui).toEqual(["ui"]);
   expect(core.projectArgs("p_id", core.FIXED.status)).toEqual(["--project", "p_id", "status", "--json"]);
-  // listed: the list read and the status read (the selector's placeholder is `<id|root>`)
+  // listed: the list read, the status read, and the dashboard and console forms with a registration id or a root (the selector's placeholder is `<id|root>`)
   expect(listed(["projects", "--json"])).toBe(true);
   expect(listed(["--project", "<id|root>", "status", "--json"])).toBe(true);
-  // not listed in v1: the mod runs `--project <id> ui` and `--project <id> console` (a registration id), where v1 lists `ui` and `--project <root> console`.
-  // This is a gap in the contract, not something the mod may assume. Remove it from here when v1 lists the two forms (the next two expectations then fail).
-  expect(listed(["--project", "<id>", "ui"]) || listed(["--project", "<id|root>", "ui"])).toBe(false);
-  expect(listed(["--project", "<id>", "console"]) || listed(["--project", "<id|root>", "console"])).toBe(false);
-  // the typed copy-command: `ahub --project '<root>' console`, the listed `--project <root> console` form
-  expect(listed(["--project", "<root>", "console"])).toBe(true);
+  expect(listed(["--project", "<id|root>", "ui"])).toBe(true);
+  expect(listed(["--project", "<id|root>", "console"])).toBe(true);
+  expect(core.projectArgs("p_id", core.FIXED.ui)).toEqual(["--project", "p_id", "ui"]);
+  expect(core.projectArgs("p_id", core.FIXED.console)).toEqual(["--project", "p_id", "console"]);
+  // the typed copy-command: `ahub --project '<root>' console`, the same listed console form
   expect(coreSrc).toContain("command: `${PROGRAM} --project ${quoted} console`");
   // no other subcommand is ever passed
   expect(coreSrc + cardSrc).not.toMatch(/\bFIXED\.(board|tail|up|upgrade|stop|restart)\b|\["(board|tail|up|upgrade|stop|restart|send|hub)"/);

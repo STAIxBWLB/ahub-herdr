@@ -9,7 +9,7 @@ The optional agent-hub entry for [Herdr](https://github.com/herdrdev/herdr-app):
 
 ## Rules
 
-- **Contract:** the mod reads only what `contract/companion-cli-v1.json` lists of ahub's CLI. A new command or field it reads is added to the contract copy and covered by `test/companion-cli-contract.test.ts` in the same PR. A contract change belongs to agent-hub (`docs/contracts/`): copy the new file here with the ahub version it came from (`contract/SOURCE.md`), never edit the copy to suit this repository. The test records one known gap (`--project <id> ui` and `console`); remove it when v1 lists those forms.
+- **Contract:** the mod reads only what `contract/companion-cli-v1.json` lists of ahub's CLI. A new command or field it reads is added to the contract copy and covered by `test/companion-cli-contract.test.ts` in the same PR. A contract change belongs to agent-hub (`docs/contracts/`): copy the new file here with the ahub version it came from (`contract/SOURCE.md`), never edit the copy to suit this repository.
 - **Receipts:** a combination in `support-matrix.json` is `supported` only when its receipt is run and no longer says NOT RUN. Fixtures and `herdr-app check` never raise a verdict.
 - **Release:** tagging needs the person's consent. Distribution is unchanged: the person copies `mod/` to `mods/ahub`.
 - **Layout:** the mod stays in `mod/` (the footprint test pins exactly five files). No build step, no third-party dependency, no ahub source import.
